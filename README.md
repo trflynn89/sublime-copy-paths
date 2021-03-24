@@ -1,0 +1,1 @@
+# sublime-copy-paths
