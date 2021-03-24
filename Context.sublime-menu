@@ -1,0 +1,45 @@
+[
+    { "caption": "-", "id": "copy" },
+    {
+        "caption": "Copy File Name",
+        "command": "copy_file_name",
+    },
+    {
+        "caption": "Copy File Directory",
+        "command": "copy_file_directory",
+    },
+    {
+        "caption": "Copy File Path Relative to Project",
+        "command": "copy_file_path_relative_to_project",
+    },
+    {
+        "caption": "Copy File Directory Relative to Project",
+        "command": "copy_file_directory_relative_to_project",
+    },
+
+    { "caption": "-", "id": "c++" },
+    {
+        "caption": "Copy File Path as C/C++ #include Macro",
+        "command": "copy_file_path_as_include_macro",
+    },
+    {
+        "caption": "Copy File Path as Objective-C #import Macro",
+        "command": "copy_file_path_as_import_macro",
+    },
+    {
+        "caption": "Copy File Path as C/C++ Header Guard",
+        "command": "copy_file_path_as_header_guard",
+    },
+
+    { "caption": "-", "id": "java" },
+    {
+        "caption": "Copy File Path as Java import Statement",
+        "command": "copy_file_path_as_import_statement",
+    },
+    {
+        "caption": "Copy File Directory as Java package Statement",
+        "command": "copy_file_directory_as_package_statement",
+    },
+
+    { "caption": "-", "id": "end" },
+]

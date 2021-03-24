@@ -1,1 +1,1 @@
-# sublime-copy-paths
+# Sublime Text 3 Path Copy Plugin
