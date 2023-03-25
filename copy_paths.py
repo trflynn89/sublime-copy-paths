@@ -5,6 +5,26 @@ import sublime
 import sublime_plugin
 
 
+def get_project_setting(setting_key, default):
+    """
+    Load a project setting from the active window.
+    """
+    project_data = sublime.active_window().project_data()
+    if not project_data or ('settings' not in project_data):
+        return default
+
+    settings = project_data['settings']
+    if 'copy-paths' not in project_data['settings']:
+        return default
+
+    settings = settings['copy-paths']
+
+    if setting_key not in settings:
+        return default
+
+    return settings[setting_key]
+
+
 class RelativePath(object):
     """
     Class to determine and store the path of the current file relative to its project's root
@@ -69,6 +89,14 @@ class CFamilyCommand(RelativePathCommand):
                     break
 
         return relative_path.replace(os.path.sep, '/')
+
+    def to_include_statement(self, include_text):
+        use_brackets = get_project_setting('c_family_includes_use_brackets', False)
+        opening_character = '<' if use_brackets else '"'
+        closing_character = '>' if use_brackets else '"'
+
+        header_file = self.to_header_file()
+        return f'#{include_text} {opening_character}{header_file}{closing_character}'
 
     def is_enabled(self):
         return self.is_enabled_for_languages(self.LANGUAGES)
@@ -167,8 +195,7 @@ class CopyFilePathAsIncludeMacroCommand(CFamilyCommand):
     """
 
     def run(self, edit):
-        header_file = self.to_header_file()
-        include = '#include "%s"' % (header_file)
+        include = self.to_include_statement('include')
 
         sublime.set_clipboard(include)
         sublime.status_message('Copied include')
@@ -181,8 +208,7 @@ class CopyFilePathAsImportMacroCommand(CFamilyCommand):
     """
 
     def run(self, edit):
-        header_file = self.to_header_file()
-        include = '#import "%s"' % (header_file)
+        include = self.to_include_statement('import')
 
         sublime.set_clipboard(include)
         sublime.status_message('Copied import')
