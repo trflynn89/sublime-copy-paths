@@ -92,10 +92,20 @@ class CFamilyCommand(RelativePathCommand):
 
     def to_include_statement(self, include_text):
         use_brackets = get_project_setting('c_family_includes_use_brackets', False)
+        prefixes = get_project_setting('c_family_includes_strip_prefixes', [])
+
         opening_character = '<' if use_brackets else '"'
         closing_character = '>' if use_brackets else '"'
-
         header_file = self.to_header_file()
+
+        for prefix in [p for p in prefixes if header_file.startswith(p)]:
+            header_file = header_file.replace(prefix, '')
+
+            if header_file.startswith('/'):
+                header_file = header_file[1:]
+
+            break
+
         return f'#{include_text} {opening_character}{header_file}{closing_character}'
 
     def is_enabled(self):

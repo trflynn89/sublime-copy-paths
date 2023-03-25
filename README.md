@@ -32,6 +32,10 @@ The following settings may be used:
     "settings": {
         "copy-paths": {
             "c_family_includes_use_brackets": true,
+            "c_family_includes_strip_prefixes": [
+                "include",
+                "source",
+            ],
         }
     }
 }
@@ -39,3 +43,7 @@ The following settings may be used:
 
 * `c_family_includes_use_brackets` - If enabled, copying the current file as a `#include` or `#import`
    macro will do so with angle brackets (`<` and `>`). Otherwise, defaults to using quotation marks.
+* `c_family_includes_strip_prefixes` - A list of paths to remove from the beginning of the current
+   file when copying it as a `#include` or `#import`. For example, if this list contains `"foo/bar"`,
+   and the file `foo/bar/baz.cpp` is copied as an `#include` statement, the result may be
+   `#include "baz.hpp"`. Defaults to an empty list.
