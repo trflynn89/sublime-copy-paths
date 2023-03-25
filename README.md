@@ -4,6 +4,7 @@ Sublime Text plugin to add path copying commands to the Command Palette and righ
 
 General files:
 
+* Copy the path of the current file.
 * Copy the name of the current file.
 * Copy the directory of the current file.
 * Copy the path of the current file relative to its project's root directory.

@@ -89,6 +89,17 @@ class JavaFamilyCommand(RelativePathCommand):
     def is_enabled(self):
         return self.is_enabled_for_languages(self.LANGUAGES)
 
+class CopyFilePathCommand(sublime_plugin.TextCommand):
+    """
+    Command to copy the path of the current file.
+    """
+    def run(self, edit):
+        sublime.set_clipboard(self.view.file_name())
+        sublime.status_message('Copied file path')
+
+    def is_enabled(self):
+        return bool(self.view.file_name())
+
 class CopyFileNameCommand(sublime_plugin.TextCommand):
     """
     Command to copy the name of the current file.
