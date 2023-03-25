@@ -4,11 +4,13 @@ import re
 import sublime
 import sublime_plugin
 
+
 class RelativePath(object):
     """
     Class to determine and store the path of the current file relative to its project's root
     directory.
     """
+
     def __init__(self):
         self.project_path = None
         self.relative_path = None
@@ -25,14 +27,17 @@ class RelativePath(object):
 
             if candidates:
                 self.project_path = min(candidates, key=len)
-                self.relative_path = os.path.relpath(file_path, self.project_path)
+                self.relative_path = os.path.relpath(
+                    file_path, self.project_path)
 
         return (self.relative_path, self.project_path)
+
 
 class RelativePathCommand(sublime_plugin.TextCommand):
     """
     Base class for commands which need relative path information.
     """
+
     def __init__(self, *args, **kwargs):
         super(RelativePathCommand, self).__init__(*args, **kwargs)
         self.relative_path = RelativePath()
@@ -42,6 +47,7 @@ class RelativePathCommand(sublime_plugin.TextCommand):
         supported = any(syntax.endswith(lang) for lang in languages)
 
         return supported and all(self.relative_path(self.view))
+
 
 class CFamilyCommand(RelativePathCommand):
     """
@@ -67,6 +73,7 @@ class CFamilyCommand(RelativePathCommand):
     def is_enabled(self):
         return self.is_enabled_for_languages(self.LANGUAGES)
 
+
 class JavaFamilyCommand(RelativePathCommand):
     """
     Base class for commands specific to the Java family of languages.
@@ -80,19 +87,21 @@ class JavaFamilyCommand(RelativePathCommand):
         java_path = java_path.replace(os.path.sep, '.')
 
         if '.com.' in java_path:
-            java_path = java_path[java_path.index('.com.') + 1 : ]
+            java_path = java_path[java_path.index('.com.') + 1:]
         elif '.org.' in java_path:
-            java_path = java_path[java_path.index('.org.') + 1 : ]
+            java_path = java_path[java_path.index('.org.') + 1:]
 
         return java_path
 
     def is_enabled(self):
         return self.is_enabled_for_languages(self.LANGUAGES)
 
+
 class CopyFilePathCommand(sublime_plugin.TextCommand):
     """
     Command to copy the path of the current file.
     """
+
     def run(self, edit):
         sublime.set_clipboard(self.view.file_name())
         sublime.status_message('Copied file path')
@@ -100,10 +109,12 @@ class CopyFilePathCommand(sublime_plugin.TextCommand):
     def is_enabled(self):
         return bool(self.view.file_name())
 
+
 class CopyFileNameCommand(sublime_plugin.TextCommand):
     """
     Command to copy the name of the current file.
     """
+
     def run(self, edit):
         sublime.set_clipboard(os.path.basename(self.view.file_name()))
         sublime.status_message('Copied file name')
@@ -111,10 +122,12 @@ class CopyFileNameCommand(sublime_plugin.TextCommand):
     def is_enabled(self):
         return bool(self.view.file_name())
 
+
 class CopyFileDirectoryCommand(sublime_plugin.TextCommand):
     """
     Command to copy the directory of the current file.
     """
+
     def run(self, edit):
         sublime.set_clipboard(os.path.dirname(self.view.file_name()))
         sublime.status_message('Copied file directory')
@@ -122,31 +135,37 @@ class CopyFileDirectoryCommand(sublime_plugin.TextCommand):
     def is_enabled(self):
         return bool(self.view.file_name())
 
+
 class CopyFilePathRelativeToProjectCommand(RelativePathCommand):
     """
     Command to copy the path of the current file relative to its project's root directory.
     """
+
     def run(self, edit):
         (relative_path, _) = self.relative_path(self.view)
 
         sublime.set_clipboard(relative_path)
         sublime.status_message('Copied relative file')
 
+
 class CopyFileDirectoryRelativeToProjectCommand(RelativePathCommand):
     """
     Command to copy the directory of the current file relative to its project's root directory.
     """
+
     def run(self, edit):
         (relative_path, _) = self.relative_path(self.view)
 
         sublime.set_clipboard(os.path.dirname(relative_path))
         sublime.status_message('Copied relative directory')
 
+
 class CopyFilePathAsIncludeMacroCommand(CFamilyCommand):
     """
     Command to copy the path of the current file relative to its project's root directory as a C/C++
     #include macro.
     """
+
     def run(self, edit):
         header_file = self.to_header_file()
         include = '#include "%s"' % (header_file)
@@ -154,11 +173,13 @@ class CopyFilePathAsIncludeMacroCommand(CFamilyCommand):
         sublime.set_clipboard(include)
         sublime.status_message('Copied include')
 
+
 class CopyFilePathAsImportMacroCommand(CFamilyCommand):
     """
     Command to copy the path of the current file relative to its project's root directory as an
     Objective-C #import macro.
     """
+
     def run(self, edit):
         header_file = self.to_header_file()
         include = '#import "%s"' % (header_file)
@@ -166,11 +187,13 @@ class CopyFilePathAsImportMacroCommand(CFamilyCommand):
         sublime.set_clipboard(include)
         sublime.status_message('Copied import')
 
+
 class CopyFilePathAsHeaderGuardCommand(CFamilyCommand):
     """
     Command to copy the path of the current file relative to its project's root directory as a C/C++
     header guard.
     """
+
     def run(self, edit):
         header_file = self.to_header_file().upper() + '_'
         header_file = re.sub('[^0-9A-Z]+', '_', header_file)
@@ -178,11 +201,13 @@ class CopyFilePathAsHeaderGuardCommand(CFamilyCommand):
         sublime.set_clipboard(header_file)
         sublime.status_message('Copied include guard')
 
+
 class CopyFilePathAsImportStatementCommand(JavaFamilyCommand):
     """
     Command to copy the path of the current file relative to its project's root directory as a Java
     import statement.
     """
+
     def run(self, edit):
         java_path = self.to_java_path()
         include = 'import %s;' % (java_path)
@@ -190,13 +215,15 @@ class CopyFilePathAsImportStatementCommand(JavaFamilyCommand):
         sublime.set_clipboard(include)
         sublime.status_message('Copied import')
 
+
 class CopyFileDirectoryAsPackageStatementCommand(JavaFamilyCommand):
     """
     Command to copy the directory of the current file relative to its project's root directory as a
     Java package statement.
     """
+
     def run(self, edit):
-        java_path = '.'.join(self.to_java_path().split('.')[ : -1])
+        java_path = '.'.join(self.to_java_path().split('.')[: -1])
         include = 'package %s;' % (java_path)
 
         sublime.set_clipboard(include)
